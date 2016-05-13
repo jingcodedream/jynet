@@ -13,8 +13,8 @@
 const uint32_t io_empty = 0x0000;
 const uint32_t io_read  = 0x0001;
 const uint32_t io_write = 0x0002;
-const uint32_t io_rdwt  = 0x0004;
-const uint32_t io_error = 0x0008;
+const uint32_t io_rdwt  = 0x0003;
+const uint32_t io_error = 0x0004;
 
 class IOHandler;
 

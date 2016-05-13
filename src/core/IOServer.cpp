@@ -21,7 +21,7 @@ IOServerEpoll::IOServerEpoll():IOServerEpoll(0, sc_maxevents, sc_timeout)  //委
 IOServerEpoll::IOServerEpoll(uint32_t flags, uint32_t maxevents, uint32_t timeout)
 {
     epfd = epoll_create1(flags);    //建议使用epoll_create1代替epoll_create,最新的实现中epoll已忽略size
-    events = malloc(sizeof(struct epoll_event) * maxevents);
+    events = (epoll_event*)malloc(sizeof(struct epoll_event) * maxevents);
     this->maxevents = maxevents;
     this->timeout = timeout;
     sleep(30);
@@ -33,7 +33,7 @@ IOServerEpoll::~IOServerEpoll()
     free(events);
 }
 
-int IOServerEpoll::AddEvent(uint32_t events, uint32_t fd)
+int IOServerEpoll::AddEvent(uint32_t events, uint32_t fd, IOHandler *iOHandler)
 {
     struct epoll_event event;
     event.events = events;

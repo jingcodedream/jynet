@@ -5,10 +5,11 @@
  *      Author: joe
  */
 
-#ifndef SRC_CORE_IO_SERVER_H_
-#define SRC_CORE_IO_SERVER_H_
+#ifndef SRC_CORE_IO_SERVER_INTERFACE_H_
+#define SRC_CORE_IO_SERVER_INTERFACE_H_
 
 #include <stdint.h>
+#include <memory>
 
 const uint32_t io_empty = 0x0000;
 const uint32_t io_read  = 0x0001;
@@ -18,21 +19,19 @@ const uint32_t io_error = 0x0004;
 
 class Session;
 
-typedef struct EventInfo
-{
-    int fd;
-    Session *session;
-}eventinfo;
+//typedef struct EventInfo {
+//    int fd;
+//    Session *session;
+//}eventinfo;
 
-class IOServer
-{
+class IOServerInterface {
 public:
-    virtual ~IOServer(){}
+    virtual ~IOServerInterface(){}
 
     virtual bool RunOnce() = 0;
     virtual void RunForever() = 0;
 
-    virtual int AddEvent(uint32_t op, uint32_t fd, Session *session) = 0;
+    virtual int AddEvent(uint32_t op, uint32_t fd, std::tr1::shared_ptr<Session> session) = 0;
     virtual int DelEvent(uint32_t events, uint32_t fd) = 0;
     virtual int WaitEvent() = 0;
 };

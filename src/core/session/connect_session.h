@@ -18,8 +18,8 @@ public:
 
     int32_t Init();
     IOStatus OnRead();
-    IOStatus OnWrite() {return IOError;}
-    IOStatus OnError() {return IOError;}
+    IOStatus OnWrite() {return IOStatusError;}
+    IOStatus OnError() {return IOStatusError;}
 private:
     int32_t fd_;
     std::string peer_ipv4_;

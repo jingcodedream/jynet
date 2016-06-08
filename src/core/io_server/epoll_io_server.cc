@@ -28,22 +28,36 @@ IOServerEpoll::~IOServerEpoll() {
     free(events);
 }
 
-int IOServerEpoll::AddEvent(uint32_t events, uint32_t fd, std::tr1::shared_ptr<SessionInterface> session) {
+IOOption IOServerEpoll::AddEvent(IOOption op, uint32_t fd, std::tr1::shared_ptr<SessionInterface> session) {
     struct epoll_event event;
-    event.events = events;
+    if(op & IOOptionRead)
+    {
+        event.events |= (EPOLLIN | EPOLLET);
+    }
+    if(op & IOOptionWrite)
+    {
+        event.events |= EPOLLOUT;
+    }
     event.data.fd = fd;
     event.data.ptr = (void*)(session.get());
     return epoll_ctl(epfd, EPOLL_CTL_ADD, fd, &event);
 }
 
-int IOServerEpoll::DelEvent(uint32_t events, uint32_t fd) {
+IOOption IOServerEpoll::DelEvent(IOOption op, uint32_t fd) {
     struct epoll_event event;
-    event.events = events;
+    if(op & IOOptionRead)
+    {
+        event.events |= (EPOLLIN | EPOLLET);
+    }
+    if(op & IOOptionWrite)
+    {
+        event.events |= EPOLLOUT;
+    }
     event.data.fd = fd;
     return epoll_ctl(epfd, EPOLL_CTL_DEL, fd, &event);
 }
 
-int IOServerEpoll::WaitEvent() {
+IOOption IOServerEpoll::WaitEvent() {
     return epoll_wait(epfd, events, maxevents, timeout);
 }
 
@@ -67,14 +81,28 @@ bool IOServerEpoll::RunOnce() {
     {
         int fd = events[i].data.fd;
         std::tr1::shared_ptr<SessionInterface> session(events[i].data.ptr);
+        uint32_t del_events = 0;
         if((events[i].events & EPOLLIN) == 1)
         {
-            session->OnRead();
+            IOStatus io_status = session->OnRead();
+            if(io_status == IOStatusSuccess)
+            {
+                del_events |= IOOptionRead;
+            }
         }
 
         if((events[i].events & EPOLLOUT) == 1)
         {
-            session->OnWrite();
+            IOStatus io_status = session->OnWrite();
+            if(io_status == IOStatusSuccess)
+            {
+                del_events |= IOOptionWrite;
+            }
+        }
+
+        if(del_events != IOOptionEmpty)
+        {
+
         }
     }
     return true;

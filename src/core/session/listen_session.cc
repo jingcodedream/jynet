@@ -25,7 +25,7 @@ int32_t ListenSession::Init(){
     }
     fd_ = fd;
     std::tr1::shared_ptr<ListenSession> sp_this(this);
-    io_server_interface_->AddEvent((EPOLLIN | EPOLLET), fd_, sp_this);
+    io_server_interface_->AddEvent(IOOptionRead, fd_, sp_this);
     return 0;
 }
 
@@ -35,11 +35,11 @@ IOStatus ListenSession::OnRead() {
     int accept_fd = accept(fd_, (sockaddr *)&peer_addr, &peer_addr_len);
     if(accept_fd < 0)
     {
-        return IOError;
+        return IOStatusError;
     }
-    std::tr1::shared_ptr<AcceptSession> accept_session(new AcceptSession(accept_fd, peer_addr.sin_addr.s_addr, peer_addr.sin_port));
-    io_server_interface_->AddEvent((EPOLLIN | EPOLLET), accept_fd, accept_session);
-    return IOContinue;
+    std::tr1::shared_ptr<ConnectSession> accept_session(new ConnectSession(accept_fd, peer_addr.sin_addr.s_addr, peer_addr.sin_port));
+    io_server_interface_->AddEvent(IOOptionRead, accept_fd, accept_session);
+    return IOStatusContinue;
 }
 
 

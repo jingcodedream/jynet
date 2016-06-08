@@ -9,9 +9,9 @@
 #define SRC_CORE_SESSION_INTERFACE_H_
 
 enum IOStatus {    //当前session的IO状态
-    IOSuccess,
-    IOContinue,
-    IOError
+    IOStatusSuccess,
+    IOStatusContinue,
+    IOStatusError
 };
 
 class SessionInterface {

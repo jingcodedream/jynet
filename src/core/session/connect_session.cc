@@ -12,7 +12,7 @@ int32_t ConnectSession::Init(){
 }
 
 IOStatus ConnectSession::OnRead() {
-    return IOContinue;
+    return IOStatusContinue;
 }
 
 

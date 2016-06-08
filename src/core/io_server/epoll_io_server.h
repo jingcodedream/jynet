@@ -19,7 +19,7 @@ public:
     bool RunOnce();
     void RunForever();
 
-    int AddEvent(uint32_t op, uint32_t fd, std::tr1::shared_ptr<Session> session);
+    int AddEvent(uint32_t op, uint32_t fd, std::tr1::shared_ptr<SessionInterface> session);
     int DelEvent(uint32_t events, uint32_t fd);
     int WaitEvent();
 

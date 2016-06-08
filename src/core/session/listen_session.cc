@@ -6,11 +6,10 @@
  */
 
 #include "session/listen_session.h"
-#include "session/accept_session.h"
-
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include "connect_session.h"
 
 int32_t ListenSession::Init(){
     int32_t fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
@@ -25,7 +24,7 @@ int32_t ListenSession::Init(){
         return -2;
     }
     fd_ = fd;
-    std::tr1::shared_ptr<Session> sp_this(this);
+    std::tr1::shared_ptr<ListenSession> sp_this(this);
     io_server_interface_->AddEvent((EPOLLIN | EPOLLET), fd_, sp_this);
     return 0;
 }
@@ -38,7 +37,7 @@ IOStatus ListenSession::OnRead() {
     {
         return IOError;
     }
-    std::tr1::shared_ptr<Session> accept_session(new AcceptSession(accept_fd, peer_addr.sin_addr.s_addr, peer_addr.sin_port));
+    std::tr1::shared_ptr<AcceptSession> accept_session(new AcceptSession(accept_fd, peer_addr.sin_addr.s_addr, peer_addr.sin_port));
     io_server_interface_->AddEvent((EPOLLIN | EPOLLET), accept_fd, accept_session);
     return IOContinue;
 }

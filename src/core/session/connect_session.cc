@@ -5,13 +5,13 @@
  *      Author: joe
  */
 
-#include "session/accept_session.h"
+#include "connect_session.h"
 
-int32_t AcceptSession::Init(){
+int32_t ConnectSession::Init(){
     return 0;
 }
 
-IOStatus AcceptSession::OnRead() {
+IOStatus ConnectSession::OnRead() {
     return IOContinue;
 }
 

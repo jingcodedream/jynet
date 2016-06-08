@@ -28,7 +28,7 @@ IOServerEpoll::~IOServerEpoll() {
     free(events);
 }
 
-int IOServerEpoll::AddEvent(uint32_t events, uint32_t fd, std::tr1::shared_ptr<Session> session) {
+int IOServerEpoll::AddEvent(uint32_t events, uint32_t fd, std::tr1::shared_ptr<SessionInterface> session) {
     struct epoll_event event;
     event.events = events;
     event.data.fd = fd;
@@ -66,15 +66,15 @@ bool IOServerEpoll::RunOnce() {
     for(uint32_t i = 0; i < ret; ++i)
     {
         int fd = events[i].data.fd;
-        std::tr1::shared_ptr<Session> session(events[i].data.ptr);
+        std::tr1::shared_ptr<SessionInterface> session(events[i].data.ptr);
         if((events[i].events & EPOLLIN) == 1)
         {
-
+            session->OnRead();
         }
 
         if((events[i].events & EPOLLOUT) == 1)
         {
-
+            session->OnWrite();
         }
     }
     return true;
